@@ -1,9 +1,15 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% block head %}
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
 <link href="{% static 'css/home.css' %}" rel="stylesheet">
+<link href="{% static 'css/enterprise432b.css' %}" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+<!-- Vendor CSS Files -->
+<link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+<link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 <script>
     $(function() {
 		var price_list =[
@@ -107,11 +113,22 @@
     const closeBtn = modal.querySelector(".close-area")
     closeBtn.addEventListener("click", e => {
         modal.style.display = "none"
-        fetch('/modal_check').response(msg=>console.log(msg))
+        fetch('/modal_check').response(msg => console.log(msg))
     })
 </script>
 {% endif %}
 
+<script>
+    let t_month;
+    let t_year = String({{today.year}})
+    if({{today.month}} < 10){
+        t_month = "0" + String({{today.month}});
+    }else{
+        t_month = String({{today.month}})
+    }
+
+    let dateview = t_year + "년 " + t_month + "월 "
+</script>
 <div class="banner-inner" id='Nav'>
     <div class ="banner-cover">
         <h1>원하시는 상품의 물가를 확인해보세요</h1>
@@ -128,69 +145,229 @@
             </button>
         </div>
     </div>
+    <div class ="subtitle">
+        <h2>
+            객월 급등 예상 품목 순위
+        </h2>
+    </div>
     <div class="round">
-        <div class="box">
-            <a><h2>급등예상</h2></a>
-        </div>
-        <div class="box">
-            <a href="./url">1.</a>
-        </div>
-        <div class="box">
-            <a href="./url">2.</a>
-        </div>
-        <div class="box">
-            <a href="./url">3.</a>
-        </div>
-        <div class="box">
-            <a href="./url">4.</a>
-        </div>
-        <div class="box">
-            <a href="./url">5.</a>
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+              <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+              <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+              <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+            </ol>
+            <script>
+                let rank_No = 1;
+            </script>
+            <div class="carousel-inner">
+                {% for r in r_list %}
+                    {% if r.pNo == r_list.0.pNo %}
+                <div class="carousel-item active">
+                    {% else %}
+                <div class="carousel-item">
+                    {% endif %}
+                  <div class = 'itembox'>
+                      <div class = "rowBox">
+                          <div class = 'itemname'>
+                              <p class = "count">
+                                  <script>
+                                      document.write(rank_No);
+                                      rank_No++;
+                                  </script>
+                              </p>
+                              <p>{{r.pName}}</p>
+                          </div>
+                          <div class ="linkbox">
+                              <a href = "./price/{{r.pNo}}">해당 품목 페이지로 이동</a>
+                          </div>
+                      </div>
+                      <div class = 'line'></div>
+                      <div class = "rowBox">
+                          <section>
+                              <p class ="t_date">
+                              <script>
+                                  document.write(dateview);
+                              </script>
+                              기준가
+                              </p>
+                          </section>
+                          
+                          <section>
+                              <p class ="t_date">
+                              객월 예상가
+                              </p>
+                          </section>
+                      </div>
+                      <div class = 'rowBox'>
+                          <section>
+                              <p class ='won'>₩</p>
+                              <p id = "now_p" class ='price'>{{r.price}} </p>
+                          </section>
+                          <section>
+                              <p class ='won'>₩</p>
+                              <p id = "next_p" class ='price'>{{r.nextprice}} </p>
+                          </section>
+                      </div>
+                      <div class = 'line'></div>
+                      {% if r.percent > 0 %}
+                      <div class = "up_centerBox">
+                          <p class = "text">전월대비</p>
+                          <p class = "result">{{r.percent}}</p>
+                          <p class = "percent">%</p>
+                          <img src = "{% static 'img/main-arrow-up.png' %}" alt = "상승"/>
+                      </div>
+                      {% else %}
+                      <div class = "down_centerBox">
+                        <p class = "text">전월대비</p>
+                        <p class = "result">{{r.percent}}</p>
+                        <p class = "percent">%</p>
+                        <img src = "{% static 'img/main-arrow-down.png' %}" alt = "하락"/>
+                        </div>
+                      {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
     <hr class='line'>
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1808c9ec989%20text%20%7B%20fill%3A%23444%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1808c9ec989%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23666%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22247.3125%22%20y%3D%22217.7%22%3ESecond%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="First slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1808c9ec989%20text%20%7B%20fill%3A%23444%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1808c9ec989%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23666%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22247.3125%22%20y%3D%22217.7%22%3ESecond%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="Second slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1808c9ec989%20text%20%7B%20fill%3A%23444%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1808c9ec989%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23666%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22247.3125%22%20y%3D%22217.7%22%3ESecond%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="Third slide">
-          </div>
+    <section class="content-full">
+        <div class="content">
+            <h2 class="bold-title">다음달 먹거리의 가격을 살펴보세요
+            </h2>
+            <p class="des-tip">가공품과 관련있는 원자재들의 가격 지표를 모아 인공지능 학습을 통해 다음달 가격을 예측합니다.</p>
+            <div class="ent-content2">
+                <ul>
+                    <li class="wow slideInUp" data-wow-duration="0.5s" data-aos="fade-up">
+                        <div class="img-box"><img loading="lazy" src="{% static 'img/home_graph.png' %}" alt="그래프"></div>
+                        <div class="desc-box">
+                            <h3>다음 달 예측가 확인
+                            </h3>
+                            <p>각 품목별 가공품에 해당하는 제품 링크를 통해 다음달의 예측 가격을 확인할 수 있습니다.
+                            </p>
+                        </div>
+                    </li>
+                    <li class="wow slideInUp" data-wow-duration="0.8s" data-aos="fade-up">
+                        <div class="img-box"><img loading="lazy" src="{% static 'img/home_coin.png' %}" alt="코인"></div>
+                        <div class="desc-box">
+                            <h3>코인 서비스
+                            </h3>
+                            <p>보유 포인트로 다음 달에 상승할 것으로 예상되는 물품들을 구매해보세요. 예측에 성공하면 상승에 비례하여 포인트를 지급합니다. 포인트는 추후 물건 구매 시 할인을 제공할 예정입니다.</p>
+                        </div>
+                    </li>
+                    <li class="wow slideInUp" data-wow-duration="1s" data-aos="fade-up">
+                        <div class="img-box"><img loading="lazy" src="{% static 'img/home_recommend.png' %}" alt="추천"></div>
+                        <div class="desc-box">
+                            <h3>최저가 확인</h3>
+                            <p>관련 제품 품목 링크에는 해당 제품을 판매하는 최저가 링크를 제공합니다. (쿠팡)
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-    </div>
-    {% comment %} <table class='def' >
-        <td>
-            밥비트입니다.
-            밥비트입니다.
-            밥비트입니다.
-            밥비트입니다.
-            밥비트입니다.
-            밥비트입니다.
-        </td>
-    </table> {% endcomment %}
+    </section>
+    <section id="team">
+        <div class="container" data-aos="fade-up">
+            <div class="section-header">
+                <h2>제작</h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>강혜진</h4>
+                            <span>a011003@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>서아현</h4>
+                            <span>a011045@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>이태우</h4>
+                            <span>a011081@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>조영래</h4>
+                            <span>a011098@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>조용준</h4>
+                            <span>a011099@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>진정한</h4>
+                            <span>a011102@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="details">
+                            <h4>최승훈</h4>
+                            <span>a011106@aivle.kt.co.kr</span>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </section>
+
 {% endblock contents %}
 
 {% block script_section %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<!-- Vendor JS Files -->
+<script src="{% static 'vendor/aos/aos.js' %}"></script>
+<script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+<script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Reveal JS File -->
+<script src="{% static 'js/reveal.js'%}"></script>
 
 <script>
     $(function() {
@@ -249,4 +426,5 @@
         }
     }
 </script>
+
 {% endblock script_section %}

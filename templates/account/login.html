@@ -88,9 +88,8 @@
     cursor: pointer;
   }
   .signin {
-    width:250px;
+    width:450px;
     height: 40px;
-    margin-left:30px !important;
     border: 1px solid lightgray;
     border-radius:5px;
     display: flex;
@@ -154,13 +153,15 @@
         {% endif %}
       </div>
       {% if field.errors %}
-      <span style="color: red;"> {{ field.errors }}</span>
+      <span style="color: red;"> 양식이 맞지 않습니다. </span>
       {% endif %}
       {% endfor %}
-      <div class='signin_or_findpassword'>
-        <a href="{% url 'account_reset_password' %}"><button class="find_password" >비밀번호 찾기</button></a>
-        <button class="signin" type="submit">로그인</button>
+      {% if form.non_field_errors %}
+      <div>
+        <span style="color: red;"> 비밀번호가 일치하지 않습니다. </span>
       </div>
+      {% endif %}
+      <button class="signin" type="submit">로그인</button>
       
       {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />

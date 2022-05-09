@@ -4,10 +4,94 @@
 <style>
 .Container {
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    flex-wrap:nowrap;
+    flex-wrap:wrap;
 }
+.predict_table_container {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    width:100%;
+}
+.predict_table {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    width: 60%;
+    padding: 20px;
+    border: 1px lightgray solid;
+}
+.product {
+    width:100%;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+.product_title {
+    width:100%;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    font-size: 25px;
+}
+.predict_name {
+    display: flex;
+    justify-content:left;
+    align-items:center;
+    padding: 20px;
+    width: 50%;
+}
+.predict_RMSE{
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    padding: 20px;
+    width: 25%;
+}
+.predict_MAPE {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    padding: 20px;
+    width: 25%;
+}
+.news_product_list {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:45px;
+    border-top: lightgray solid 1px;
+}
+.news_product {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    width:15%;
+    height:100%;
+}
+.news_product_click {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    background-color:lightgray;
+    color:white;
+    width:15%;
+    height:100%;
+}
+.news_product {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    width:15%;
+    height:100%;
+    cursor:pointer;
+}
+
 .news_box {
     display:flex;
     width: 50%;
@@ -15,29 +99,112 @@
     align-items:center;
     flex-wrap:wrap;
 }
-
 .news {
     widht:100%;
     margin-top:30px;
 }
+.article_box {
+    padding: 20px;
+    cursor:pointer;
+}
+.article_box:hover {
+    background-color: #F5F5F5;
+}
+
+.article_pubdate {
+    display:flex;
+    justify-content: right;
+    align-items:center;
+}
 </style>
 {% endblock head %}
 {% block contents %}
-<div class='news_box'>
-
-{% for article in mat.items %}
-    {% autoescape off %}
-        <div class="news">
-        <a href="article.originallink">{{ article.title }}</a>
-        <br>
-        {{ article.description }}
-        <br>
-        {{ article.pubDate}}
-        </article>
+<h1> 예측 정확도 </h1>
+<div class='predict_table_container'>
+    <div class='predict_table'>
+    <div class='product_title'>
+        <div class="predict_name">
+            상품명
+        </div>
+        <div class="predict_RMSE">
+            오차
+        </div>
+        <div class="predict_MAPE">
+            오차율
+        </div>
     </div>
-    {% endautoescape %}
-{% endfor %}
+    {% for product in products %}
+        <div class='product'>
+            <div class="predict_name">
+                {{product.pName}}
+            </div>
+            <div class="predict_RMSE">
+                {{product.RMSE|floatformat:1}}
+            </div>
+            <div class="predict_MAPE">
+                {{product.MAPE|floatformat:3}}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 </div>
+{% autoescape off %}
+<h1> 관련 기사 </h1>
+<div class='news_product_list'>
+    {% if pName == "ramyun" %}
+        <div class="news_product_click">라면</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/ramyun"' class="news_product">라면</div>
+    {% endif %}
+    {% if pName == "ice" %}
+        <div class="news_product_click">아이스크림</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/ice"' class="news_product">아이스크림</div>
+    {% endif %}
+    {% if pName == "bob" %}
+        <div class="news_product_click">즉석밥</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/bob"' class="news_product">즉석밥</div>
+    {% endif %}
+    {% if pName == "sauce" %}
+        <div class="news_product_click">된장</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/sauce"' class="news_product">된장</div>
+    {% endif %}
+    {% if pName == "egg" %}
+        <div class="news_product_click">계란</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/egg"' class="news_product">계란</div>
+    {% endif %}
+    {% if pName == "coffee" %}
+        <div class="news_product_click">커피</div>
+    {% else %}
+        <div onclick='location.href="/predictrel/coffee"' class="news_product">커피</div>
+    {% endif %}
+</div>
+<div class='news_box'>
+    {% for article_info in news %}
+        <div class="news">
+            <h2> {{ article_info.0 }}</h2>
+            {% for article in article_info.1.items %}
+                <div onclick="location.href='{{article.originallink}}'" class="article_box">
+                    <div class="article_title">
+                        <h3>{{ article.title }}</h3>
+                    </div>
+                    <div class="article_des">
+                        {{ article.description }}
+                    </div>
+                    <div class="article_pubdate">
+                        {{ article.pubDate|slice:"12:16"}}{{article.pubDate|slice:"7:11" }}{{article.pubDate|slice:"4:7"}}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+    {% endfor %}
+</div>
+{% endautoescape %}
+
 {% comment %} {{}} {% endcomment %}
 {% endblock contents %}
 

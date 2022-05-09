@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from pricePredict.models import Product
+import urllib.parse
 import requests 
 
 # Create your views here.
@@ -8,7 +10,7 @@ def get_news(keyword):
 
     url = 'https://openapi.naver.com/v1/search/news.json' 
     headers = {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret':client_secret} 
-    params = {'query':keyword} 
+    params = {'query':keyword, 'display':3 } 
     r = requests.get(url, params = params, headers = headers)
 
     j = r.json()
@@ -17,13 +19,20 @@ def get_news(keyword):
 
 def predictRelView(request, product):
     product_mat = {
-        'ramyun': ['런던 설탕', '런던 소맥', '미국 대두', ]
+        'ramyun': ['런던 설탕', '런던 소맥', '미국 대두', '미국 팜유', '미국 소맥' ],
+        'bob':['쌀'],
+        'sauce':['미국 대두'],
+        'egg':['계란'],
+        'ice':['런던 설탕'],
+        'coffee':['런던 설탕']
     }
 
-    news = {}
-
+    products = Product.objects.all()
+    print(products)
+    news = []
     for mat in product_mat[product]:
-        news['mat'] = get_news(mat)
-
-
-    return render(request, 'predictRel/predictRel.html', news)
+        news.append([mat, get_news(mat)])
+      
+    context = {'news':news, 'products':products, 'pName':product}
+    
+    return render(request, 'predictRel/predictRel.html', context)

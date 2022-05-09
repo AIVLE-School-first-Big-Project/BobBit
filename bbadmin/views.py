@@ -22,10 +22,9 @@ def slidingwindow(data, feature, length, is_diff=False):
         df[feature+'-'+str(i)] = df[feature].shift(i)
         df[feature+'-'+str(i)] = df[feature+'-'+str(i)].astype('float64')
 
-    
     if is_diff:
         df[feature+'1년증가량'] = df[feature+'-1']-df[feature+'-'+str(length)]
-    
+
     return df
 
 
@@ -34,7 +33,8 @@ def get_fea_with_gran(data, feature):
     min_idx = 0
     data = data.set_index('날짜')
     for i in range(1, 16):
-        value =  grangercausalitytests(data[['price', feature]], maxlag=15)[i][0]['ssr_ftest'][1]
+        value = grangercausalitytests(data[['price', feature]], maxlag=15)[
+            i][0]['ssr_ftest'][1]
         if Min > value:
             min_idx = i
             Min = value
@@ -52,7 +52,7 @@ def M_to_K(x):
 
 def df_formatting(price, df, material):
     # 4개월 전으로 shift
-    features=['날짜', material+'종가', material+'거래량', material+'변동 %',]
+    features = ['날짜', material+'종가', material+'거래량', material+'변동 %', ]
 
     drop_indexs = df.loc[df['종가'].isna() == True].index
     df.drop(drop_indexs, inplace=True)
@@ -70,17 +70,17 @@ def df_formatting(price, df, material):
     if(df['종가'].dtypes != 'float64'):
         df['종가'] = df['종가'].str.replace(",", '')
     df['변동 %'] = df['변동 %'].str.replace("%", '')
-    
+
     if '거래량' in list(df):
         df.fillna(method='ffill', inplace=True)
         df.fillna(method='bfill', inplace=True)
-        df['거래량'] = df['거래량'].str.replace('K','')
+        df['거래량'] = df['거래량'].str.replace('K', '')
         df['거래량'] = df['거래량'].apply(M_to_K)
-        df = df.astype({'종가': 'float', '변동 %': 'float', '거래량':'float'})
+        df = df.astype({'종가': 'float', '변동 %': 'float', '거래량': 'float'})
         df.columns = features
     else:
         df = df.astype({'종가': 'float', '변동 %': 'float'})
-        features.remove(material+'거래량') 
+        features.remove(material+'거래량')
         df.columns = features
 
     # df = slidingwindow(df, material+'종가', 12, is_diff=True)
@@ -90,11 +90,11 @@ def df_formatting(price, df, material):
     df.fillna(method='bfill', inplace=True)
 
     for feature in features:
-        if feature=='날짜':
+        if feature == '날짜':
             continue
         idx = get_fea_with_gran(df, feature)
         df[feature+'-'+str(idx)] = df[feature].shift(idx)
-        df[feature+'-'+str(idx)] = df[feature+'-'+str(idx)].astype('float64')  
+        df[feature+'-'+str(idx)] = df[feature+'-'+str(idx)].astype('float64')
 
     features.remove('날짜')
     df.drop(features, axis=1, inplace=True)
@@ -106,8 +106,6 @@ def C_to_DB_consumerprice(spec_list, product_csv, materials_csv):
     materials_dfs = []
 
     # materials_csv dataframe화
-
-
 
     for spec in spec_list:
         df = all_data.loc[all_data['제품명'] == spec]
@@ -126,8 +124,8 @@ def C_to_DB_consumerprice(spec_list, product_csv, materials_csv):
 
         for material in materials_csv:
             temp = pd.read_csv('./static/csv/materirals_Crawling_csv/' + material,
-                            usecols=['날짜', '종가', '변동 %', '거래량'],
-                            thousands = ',')
+                               usecols=['날짜', '종가', '변동 %', '거래량'],
+                               thousands=',')
             df = df_formatting(df, temp, material)
             # materials_dfs.append(df_formatting(price, temp, material))
 
@@ -138,7 +136,6 @@ def C_to_DB_consumerprice(spec_list, product_csv, materials_csv):
         # count = 0
         # for material in materials_dfs:
         #     df = df.join(material.set_index('날짜'), on='날짜')
-
 
         # 과거 데이터 중 NaN제거
         # drop_indexs = df.loc[df['m_price0'].isna() == True].index
@@ -183,6 +180,7 @@ def C_to_DB_consumerprice(spec_list, product_csv, materials_csv):
         # RMSE
         RMSE = mean_squared_error(y_test, y_pred)**0.5
         MAPE = mean_absolute_percentage_error(y_test, y_pred)
+        percent = round((((next_price - now_price)/now_price) * 100), 2)
 
         # Product DB 저장
         product = get_object_or_404(Product, pName=spec)
@@ -190,6 +188,7 @@ def C_to_DB_consumerprice(spec_list, product_csv, materials_csv):
         product.nextprice = next_price
         product.RMSE = RMSE
         product.MAPE = MAPE
+        product.percent = percent
         product.save()
 
         # 모델 저장

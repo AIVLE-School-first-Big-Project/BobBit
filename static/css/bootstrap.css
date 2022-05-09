@@ -6296,7 +6296,7 @@ button.close {
 .carousel-control-prev,
 .carousel-control-next {
   position: absolute;
-  top: 0;
+  top: 25%;
   bottom: 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -6307,10 +6307,12 @@ button.close {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  width: 15%;
+  width: 3rem;
+  height: 50%;
   color: #fff;
   text-align: center;
   opacity: 0.5;
+  background-color: #82CCD4;
 }
 
 .carousel-control-prev:hover,
@@ -6376,7 +6378,7 @@ button.close {
   margin-right: 3px;
   margin-left: 3px;
   text-indent: -999px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .carousel-indicators li::before {
@@ -6400,7 +6402,7 @@ button.close {
 }
 
 .carousel-indicators .active {
-  background-color: #fff;
+  background-color: #304e52;
 }
 
 .carousel-caption {

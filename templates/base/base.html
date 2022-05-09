@@ -181,6 +181,63 @@
         {% block contents %} 
         {% endblock contents%}
     </div>
+    <footer class="footer-web">
+        <div class="footer-content">
+            <div class="footer-box">
+                <div class="footer-item">
+                    <h3>참고문헌</h3>
+                    <ul>
+                        <li><a target="_blank" href="https://kr.investing.com/">Investing</a></li>
+                        <li><a target="_blank" href="https://www.ekapepia.com/index.do">축산물품질평가원</a></li>
+                        <li><a target="_blank" href="http://price.consumer.or.kr/">소비자물가정보서비스</a></li>
+                    </ul>
+                </div>
+                <div class="footer-item">
+                    <h3>데이터 예측관계</h3>
+                    <ul>
+                        <li><a href="./" target="_blank">모델별 예측관계</a></li>
+                    </ul>
+                </div>
+                <div class="footer-item">
+                    <h3>물가정보</h3>
+                    <ul class="contact">
+                        <li><a href="{% url 'productInfo:product_page' 1%}">아이스크림</a></li>
+                        <li><a href="{% url 'productInfo:product_page' 2%}">즉석밥</a></li>
+                        <li><a href="{% url 'productInfo:product_page' 3%}">된장</a></li>
+                        <li><a href="{% url 'productInfo:product_page' 4%}">계란</a></li>
+                        <li><a href="{% url 'productInfo:product_page' 5%}">라면</a></li>
+                        <li><a href="{% url 'productInfo:product_page' 6%}">커피</a></li>
+                    </ul>
+                </div>
+                <div class="footer-item">
+                    <h3>랭킹</h3>
+                    <ul>
+                        <li><a href="{% url 'rank:ranking' %}" rel="nofollow">포인트 랭킹</a></li>
+                    </ul>
+                </div>
+                <div class="footer-item">
+                    <h3>문의사항</h3>
+                    <ul>
+                        <li><a href="{% url 'qandaBoard:index' %}" >QnA</a></li>
+                    </ul>
+                </div>
+                <div class="footer-item">
+                    <div class="footer-logo">
+                        <a href="{% url 'home'%}">
+                            🍚 Bobbit</a>
+                    </div>
+                    <p><a href="mailto:bobbit@gmail.com" target="_blank" rel="nofollow">bobbit@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="footer-foot">
+                <p class="foot-first">
+                    <a rel="nofollow">Privacy Policy</a>
+                    <a rel="nofollow">User Agreement</a>
+                </p>
+                <p class="foot-last">© 2022- Bobbit Co.,Ltd. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
     <script src="{% static 'js/base.js' %}"></script>
     {% block script_section %} 
     {% endblock script_section%}
